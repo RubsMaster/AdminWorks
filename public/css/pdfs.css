@@ -1,0 +1,143 @@
+*{margin: 0; border: 0; padding: 0; box-sizing: border-box;}
+@import url(https://fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,400italic,500,500italic,700,700italic,900,900italic);
+body {
+  background: #FFFFFF; 
+  //border: 1px solid red;
+  color: #272727;
+  font-family: 'Roboto', sans-serif; 
+  font-size: 12px; 
+  height: 29.7cm; 
+  position: relative;
+  margin: 0 auto; 
+  width: 21cm;
+}
+.container{padding: .6cm;}
+
+header {
+  padding: 10px 10px;
+  margin-bottom: 30px;
+}
+
+a{color: #000000;}
+
+h1 {
+  color: #212121;
+  font-size: 2em;
+  line-height: 1em;
+  font-weight: normal;
+  margin: 0  0 10px 0;
+  text-align: center;
+}
+.h4-dif {padding-left: 10px;}
+img{ 
+  border-radius: 60px;
+  height: 120px;
+  border: 5px solid #ffffff;
+  right: 20px; 
+  top: 58px;
+  position:absolute;
+  width: 120px; 
+}
+
+strong{color: #212121;}
+.borde {border: 1px solid red;}
+.carrera{
+  width: 80%;
+  margin: 0 auto;
+  padding: 5px;
+  list-style: none;
+}
+
+.alineados{
+  display: inline-block;
+  vertical-align: top;
+  width: 45%;
+  margin: 0 5px;
+
+}
+.carrera li {
+  display: inline-block;
+  width: 50%;
+  margin: 0 3px;
+}
+.carrera li:last-child {
+  width: 40%;
+}
+.des-izq{
+  margin-top: 10px;
+  width: 82%;
+}
+.div-center{
+  margin: 5px auto;
+  width: 95%;
+  text-align: center;
+  padding-left: 42px;
+}
+.experiencia , .ability{
+  margin: 7px auto;
+  width: 95%;
+}
+.experiencia li,.ability li {margin: 4px 0;}
+
+.firma{
+  text-align: center;
+  margin-top: 20px;
+}
+.firma h4{border-bottom: 1px solid black; width: 300px;
+  margin: 0 auto;
+}
+.h-title{
+  margin: 5px 0;
+  background: #FFFFFF;
+  width: 100%;
+  padding: 5px 2px;
+}
+.h-f{
+  width: 82%;
+}
+
+.parraf{
+  margin: 3px 0;
+}
+.parrafo{
+  padding-left: 20px;
+  margin-bottom: 6px;
+}
+.justify{
+  text-align: justify;
+}
+.personal{
+  display: inline-block;
+  margin: 5px 5px;
+  vertical-align: top;
+  width: 45%;
+}
+.aling-left{
+  text-align: left;
+}
+.aling-right{
+  text-align: right;
+}
+.undeline{
+  text-decoration: underline;
+}
+
+.in-line{margin-bottom: 6px;}
+.in-line li {
+  display: inline-block;
+  margin-top: 0;
+  margin-left: 5px;
+  width: 140px;
+  vertical-align: top;
+}
+
+footer {
+  color: #5D6975;
+  width: 100%;
+  height: 30px;
+  position: absolute;
+  bottom: 0;
+  border-top: 1px solid #C1CED9;
+  padding: 8px 0;
+  text-align: center;
+}
