@@ -5,7 +5,7 @@
 @section('titleHeader')Mis Servicios @stop
 
 @section('content')
-    @include('services.admin')
+    @include('company.services.admin')
 @stop
 
 @section('script')

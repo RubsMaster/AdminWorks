@@ -13,12 +13,16 @@ use Illuminate\Support\Facades\Auth;
 use empleaDos\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers as userReg;
+use Illuminate\Support\Facades\Log;
 use Redirect;
-use AuthenticatesUsers, RegistersUsers;
+// use AuthenticatesUsers, RegistersUsers;
 use Illuminate\Support\Facades\Lang;
 use SebastianBergmann\Environment\Console;
+use Illuminate\Foundation\Auth\AuthenticatesUsers;
+
 class AuthController extends Controller
 {
+    use AuthenticatesUsers;
     /*
     |--------------------------------------------------------------------------
     | Registration & Login Controller
@@ -177,7 +181,6 @@ class AuthController extends Controller
     }
 
 
-
     public function infoPersonal()
     {
         return view('auth.registerp');
@@ -227,6 +230,7 @@ class AuthController extends Controller
 
     public function loginPath()
     {
+        // Log::info('Se ejecutó la función loginPath');
         return route('frontend.index');
     }
 
@@ -264,79 +268,79 @@ class AuthController extends Controller
 
     public function getLogin()
     {
-        
         return view('auth.login');
     }
 
-    public function postLogin(Request $request)
-    {
-      dd($request);
-        $this->validate($request, [
-            $this-> loginUsername() => 'required', 'password' => 'required',
-        ]);
-       
-        
-
-        $throttles = $this-> isUsingThrottlesLoginsTrait();
-
-        if ($throttles && $this->hasTooManyLoginAttempts($request)) {
-            return $this->sendLockoutResponse($request);
-        }
-
-        $credentials = $this->getCredentials($request);
-        
-
-        if (Auth::attempt($credentials, $request->has('remember'))) {
-            return $this->handleUserWasAuthenticated($request, $throttles);
-        }
-        
-        
-        if ($throttles) {
-            $this->incrementLoginAttempts($request);
-        }
+    // public function postLogin(Request $request)
+    // {
+    //   //dd($request);
+    //     $this->validate($request, [
+    //         $this-> loginUsername() => 'required', 'password' => 'required',
+    //     ]);
 
 
-        return redirect($this->loginPath())
-            ->withInput($request->only($this->loginUsername(), 'remember'))
-            ->withErrors([
-                $this->loginUsername() => $this->getFailedLoginMessage(),
-            ]);
-    }
 
-    protected function isUsingThrottlesLoginsTrait()
-    {
-        return in_array(
-            ThrottlesLogins::class, class_uses_recursive(get_class($this))
-        );
-    }
-    public function loginUsername()
-    {
-        dd($this);
-        return property_exists($this, 'username') ? $this->username() : 'email';
-    }
-    protected function getFailedLoginMessage()
-    {
-        return Lang::has('auth.failed')
-                ? Lang::get('auth.failed')
-                : 'cacacacacaca.';
-    }
-    /**
-     * Send the response after the user was authenticated.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  bool  $throttles
-     * @return \Illuminate\Http\Response
-     */
-    protected function handleUserWasAuthenticated(Request $request, $throttles)
-    {
-        if ($throttles) {
-            $this->clearLoginAttempts($request);
-        }
+    //     $throttles = $this-> isUsingThrottlesLoginsTrait();
 
-        if (method_exists($this, 'authenticated')) {
-            return $this->authenticated($request, Auth::user());
-        }
+    //     if ($throttles && $this->hasTooManyLoginAttempts($request)) {
+    //         return $this->sendLockoutResponse($request);
+    //     }
 
-        return redirect()->intended($this->redirectPath());
-    }
+    //     $credentials = $this->getCredentials($request);
+
+
+    //     if (Auth::attempt($credentials, $request->has('remember'))) {
+    //         return $this->handleUserWasAuthenticated($request, $throttles);
+    //     }
+
+
+    //     if ($throttles) {
+    //         $this->incrementLoginAttempts($request);
+    //     }
+
+    //     return loginPath();
+
+    //     // return redirect($this->loginPath())
+    //     //     ->withInput($request->only($this->loginUsername(), 'remember'))
+    //     //     ->withErrors([
+    //     //         $this->loginUsername() => $this->getFailedLoginMessage(),
+    //     //     ]);
+    // }
+
+    // protected function isUsingThrottlesLoginsTrait()
+    // {
+    //     return in_array(
+    //         ThrottlesLogins::class, class_uses_recursive(get_class($this))
+    //     );
+    // }
+    // public function loginUsername()
+    // {
+    //     //dd($this);
+    //     return property_exists($this, 'username') ? $this->username() : 'email';
+    // }
+    // protected function getFailedLoginMessage()
+    // {
+    //     return Lang::has('auth.failed')
+    //             ? Lang::get('auth.failed')
+    //             : 'cacacacacaca.';
+    // }
+    // /**
+    //  * Send the response after the user was authenticated.
+    //  *
+    //  * @param  \Illuminate\Http\Request  $request
+    //  * @param  bool  $throttles
+    //  * @return \Illuminate\Http\Response
+    //  */
+    // protected function handleUserWasAuthenticated(Request $request, $throttles)
+    // {
+    //     if ($throttles) {
+    //         $this->clearLoginAttempts($request);
+    //     }
+
+    //     if (method_exists($this, 'authenticated')) {
+    //         return $this->authenticated($request, Auth::user());
+    //     }
+
+    //     return redirect()->intended($this->redirectPath());
+    // }
 }

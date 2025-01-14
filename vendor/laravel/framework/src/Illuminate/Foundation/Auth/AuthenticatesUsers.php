@@ -32,9 +32,10 @@ trait AuthenticatesUsers
      */
     public function postLogin(Request $request)
     {
-        dd();
+        // dd();
         $this->validate($request, [
-            $this->loginUsername() => 'required', 'password' => 'required',
+            $this->loginUsername() => 'required',
+            'password' => 'required',
         ]);
 
         // If the class is using the ThrottlesLogins trait, we can automatically throttle
@@ -47,10 +48,33 @@ trait AuthenticatesUsers
         }
 
         $credentials = $this->getCredentials($request);
+        dd(Auth::attempt($credentials, $request->has('remember')));
+
+        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+            return redirect()->intended($this->redirectPath());
+        } else {
+            return back()->withErrors([
+                'email' => 'Credenciales inválidas.',
+            ]);
+        }
+
 
         if (Auth::attempt($credentials, $request->has('remember'))) {
             return $this->handleUserWasAuthenticated($request, $throttles);
+        } elseif (Auth::attempt($credentials)) {
+            return redirect()->intended($this->redirectPath());
+        } else {
+            if ($throttles) {
+                $this->incrementLoginAttempts($request);
+            }
+
+            return redirect($this->loginPath())
+                ->withInput($request->only($this->loginUsername(), 'remember'))
+                ->withErrors([
+                    $this->loginUsername() => $this->getFailedLoginMessage(),
+                ]);
         }
+
 
         // If the login attempt was unsuccessful we will increment the number of attempts
         // to login and redirect the user back to the login form. Of course, when this
@@ -60,7 +84,7 @@ trait AuthenticatesUsers
         }
 
         return redirect($this->loginPath())
-            ->withInput($request->only($this->loginUsername(), 'remember'))
+            ->withInput($request->only($this->loginUsername(), 'email'))
             ->withErrors([
                 $this->loginUsername() => $this->getFailedLoginMessage(),
             ]);
@@ -105,8 +129,8 @@ trait AuthenticatesUsers
     protected function getFailedLoginMessage()
     {
         return Lang::has('auth.failed')
-                ? Lang::get('auth.failed')
-                : 'These credentials do not match our records.';
+            ? Lang::get('auth.failed')
+            : 'These credentials do not match our records.';
     }
 
     /**
@@ -128,6 +152,7 @@ trait AuthenticatesUsers
      */
     public function loginPath()
     {
+        // dd('Se ejecutó la función loginPath');
         return property_exists($this, 'loginPath') ? $this->loginPath : '/auth/login';
     }
 
@@ -138,7 +163,6 @@ trait AuthenticatesUsers
      */
     public function loginUsername()
     {
-        dd($this);
         return property_exists($this, 'username') ? $this->username : 'email';
     }
 
@@ -150,7 +174,8 @@ trait AuthenticatesUsers
     protected function isUsingThrottlesLoginsTrait()
     {
         return in_array(
-            ThrottlesLogins::class, class_uses_recursive(get_class($this))
+            ThrottlesLogins::class,
+            class_uses_recursive(get_class($this))
         );
     }
 }

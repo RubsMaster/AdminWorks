@@ -4,7 +4,8 @@
 @section('titleHeader')Administración @stop
 
 @section('content')
-    @include('services.admin')
+    {{-- @include('aspirantes.services.admin') --}}
+    <p>hola</p>
 @stop
 
 @section('script')

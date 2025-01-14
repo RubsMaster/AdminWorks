@@ -4,7 +4,7 @@
 @section('titleHeader')Crear Un Servicio  @stop
 
 @section('content')
-    @include('services.create')
+    @include('aspirantes.services.create')
 @stop
 
 

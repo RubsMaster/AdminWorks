@@ -28,7 +28,7 @@
             "database"
         ],
         "psr-4": {
-            "app\\": "app/"
+            "empleaDos\\": "app/"
         },
         "files":[
             "app/helpers.php"

@@ -5,12 +5,7 @@
 
 @section('content')
     @include('services.show')
-
-
-    
 @stop
-
-
 
 @section('script')
 

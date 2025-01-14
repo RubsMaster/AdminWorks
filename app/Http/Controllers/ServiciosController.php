@@ -11,14 +11,20 @@ use Illuminate\Http\Request;
 use empleaDos\Http\Requests;
 use empleaDos\Http\Controllers\Controller;
 use empleaDos\Entities\Category;
-use Auth;
-use Session;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Log;
+
+@include('aspirantes.services.admin');
 
 class ServiciosController extends Controller
 {
+    private $usid;
+    private $usrol;
+
     public function __construct()
     {
-        
+
         $this->usid = Auth::user()->id;
         $this->usrol = Auth::user()->type;
     }
@@ -28,53 +34,35 @@ class ServiciosController extends Controller
      * @return Response
      */
     public function index()
-            
     {
-        $services =  Service::where('user_id', $this->usid)->orderBy('id', 'DESC')->get();
-        if ($this->usrol == 'company'){
-            return view('company.services.admin', compact('services'));
-        }
-        return view('aspirantes.services.admin', compact('services'));
-        
-        // ese codigo estaba asi o lo moviste, nadamas movi lo de user pero mira aqui tengo un respaldo que dejaste de ahi me baso
-        /*$services =  Service::where('user_id', $this->usid)->orderBy('id', 'DESC')->get();
-        if ($this->usrol == 'company'){
-            return view('company.services.admin', compact('services'));
-        }
-        services =  Service::where('user_id', $this->usid)->orderBy('id', 'DESC')->get();
-        if ($this->usrol == 'user'){
-        return view('aspirantes.services.admin', compact('services'));
-        */
+        $services = Service::where('user_id', $this->usid)->orderBy('id', 'DESC')->get();
+
+        $view = ($this->usrol == 'company') ? 'company.services.admin' : 'aspirantes.services.admin';
+
+        return view($view, compact('services'));
     }
 
     public function adminView()
-            
     {
-        $services =  Service::where('user_id', $this->usid)->orderBy('id', 'DESC')->get();
-        if ($this->usrol == 'user'){
+        $services = Service::where('user_id', $this->usid)->orderBy('id', 'DESC')->get();
+
+        if ($this->usrol == 'user') {
+            // dd('putitas en tanga');
             return view('aspirantes.services.admin', compact('services'));
         }
-        return view('company.services.admin', compact('services'));
-   
-        // ese codigo estaba asi o lo moviste, nadamas movi lo de user pero mira aqui tengo un respaldo que dejaste de ahi me baso
-        /*$services =  Service::where('user_id', $this->usid)->orderBy('id', 'DESC')->get();
-        if ($this->usrol == 'company'){
-            return view('company.services.admin', compact('services'));
-        }
-        services =  Service::where('user_id', $this->usid)->orderBy('id', 'DESC')->get();
-        if ($this->usrol == 'user'){
-        return view('aspirantes.services.admin', compact('services'));
-        */
-    }
-    
 
-     public function list2()
+        return view('company.services.admin', compact('services'));
+    }
+
+
+
+    public function list2()
     {
         $services = service::where('type', 'Y')->orderBy('id', 'ASC')->paginate();
         return view('aspirantes.services.list', compact('services'));
     }
 
-     public function list3()
+    public function list3()
     {
         $services = service::where('type', 'Y')->orderBy('id', 'ASC')->paginate();
         return view('company.services.list', compact('services'));
@@ -85,15 +73,15 @@ class ServiciosController extends Controller
      * @return Response
      */
     public function create()
-            
+
     {
-        $imags = Myimg::where('user_id',$this->usid)->paginate(6);
-        $catego = Category::lists('category','id');
-        if ($this->usrol == 'company'){
-            return view('company.services.create',compact('catego','imags'));
+        $imags = Myimg::where('user_id', $this->usid)->paginate(6);
+        $catego = Category::pluck('category', 'id');
+        if ($this->usrol == 'company') {
+            return view('company.services.create', compact('catego', 'imags'));
         }
-        
-        return view('aspirantes.services.create', compact('catego','imags'));
+
+        return view('aspirantes.services.create', compact('catego', 'imags'));
     }
 
     /**
@@ -104,7 +92,7 @@ class ServiciosController extends Controller
      */
     public function store(ServiceRequestTable $request)
     {
-        
+
         $service = new Service;
         $service->user_id           = $this->usid;
         $service->service           = $request->service;
@@ -116,7 +104,6 @@ class ServiciosController extends Controller
         $service->save();
 
         Session::flash('message', '¡Tu Servicio ha sido creado correctamente!');
-        Session::flash('message','¡Tu Servicio ha sido creado correctamente!');
         return redirect()->route('services.index');
     }
 
@@ -129,25 +116,24 @@ class ServiciosController extends Controller
     public function show($id)
     {
 
-        
-        $services = Service::where('id',$id)->get();
-        if ($this->usrol == 'company'){
-            return view('company.services.show',compact('services'));
+        $services = Service::where('id', $id)->get();
+        // dd($services);
+        if ($this->usrol == 'company') {
+            return view('company.services.show', compact('services'));
         }
         return view('aspirantes.services.show', compact('services'));
-
     }
 
-     public function show2($id)
+    public function show2($id)
     {
-        $services = Service::where('id',$id)->get();
-        if ($this->usrol == 'user'){
-           return view('aspirantes.services.show', compact('services'));
+        $services = Service::where('id', $id)->get();
+        if ($this->usrol == 'user') {
+            return view('aspirantes.services.show', compact('services'));
         }
         return view('company.services.show', compact('services'));
-       }
+    }
 
-    
+
     public function showajax($id)
     {
 
@@ -165,15 +151,15 @@ class ServiciosController extends Controller
      */
     public function edit($id)
     {
-        $imags = Myimg::where('user_id',$this->usid)->paginate(6);
+        $imags = Myimg::where('user_id', $this->usid)->paginate(6);
         $services = Service::findOrFail($id);
-        $catego = Category::lists('category','id');
-        $subcat = Subcategory::lists('subcategory','id');
+        $catego = Category::lists('category', 'id');
+        $subcat = Subcategory::lists('subcategory', 'id');
 
-        if ($this->usrol == 'company'){
-            return view('company.services.edit',compact('services','catego','subcat','imags'));
+        if ($this->usrol == 'company') {
+            return view('company.services.edit', compact('services', 'catego', 'subcat', 'imags'));
         }
-        return view('aspirantes.services.edit', compact('services','catego','subcat','imags'));
+        return view('aspirantes.services.edit', compact('services', 'catego', 'subcat', 'imags'));
     }
 
     /**
@@ -185,18 +171,18 @@ class ServiciosController extends Controller
      */
     public function update(ServiceRequestTable $request, $id)
     {
-         if ($validator->fails()) {
+        if ($validator->fails()) {
             return redirect()->route('upcurriculum.create')
                 ->withErrors($validator)
                 ->withInput();
         }
         $service = Service::find($id);
-        $dir =  'dir'.$this->usid;
+        $dir =  'dir' . $this->usid;
         if (! empty($request['img_service'])) {
             $oldimage = $service->img_service;
             if (! empty($oldimage)) {
-                if (\Storage::disk('local2')->exists($dir."//".$oldimage)) {
-                    \Storage::disk('local2')->delete($dir."//".$oldimage);
+                if (\Storage::disk('local2')->exists($dir . "//" . $oldimage)) {
+                    \Storage::disk('local2')->delete($dir . "//" . $oldimage);
                 }
             }
         }
@@ -219,21 +205,20 @@ class ServiciosController extends Controller
      * @param  int  $id
      * @return Response
      */
-      public function destroy($id)
+    public function destroy($id)
     {
         $servi = Service::findOrFail($id);
-        $dir =  'dir'.Auth::user()->id;
+        $dir =  'dir' . Auth::user()->id;
 
         $oldarchivo = $servi->img_service;
         if (! empty($oldarchivo)) {
-            if (\Storage::disk('local2')->exists($dir."//".$oldarchivo)) {
-                \Storage::disk('local2')->delete($dir."//".$oldarchivo);
+            if (\Storage::disk('local2')->exists($dir . "//" . $oldarchivo)) {
+                \Storage::disk('local2')->delete($dir . "//" . $oldarchivo);
             }
         }
         $servi->delete();
         return response()->json([
             'message' => 'Done'
         ]);
-
     }
 }

@@ -34,18 +34,28 @@ class RateLimiter
      */
     public function tooManyAttempts($key, $maxAttempts, $decayMinutes = 1)
     {
+        // Verifica si el usuario está bloqueado
         $lockedOut = $this->cache->has($key.':lockout');
-
+    
+        // Si los intentos fallidos son mayores que el máximo permitido o si está bloqueado
         if ($this->attempts($key) > $maxAttempts || $lockedOut) {
+            
+            // Si no está bloqueado, establecer el bloqueo en caché
             if (! $lockedOut) {
                 $this->cache->add($key.':lockout', time() + ($decayMinutes * 60), $decayMinutes);
             }
-
-            return true;
+    
+            // Acción adicional si está bloqueado
+            if ($lockedOut) {
+                Log::warning('Intento de inicio de sesión bloqueado para: ' . $key);
+            }
+    
+            return true; // Indica que está bloqueado
         }
-
-        return false;
+    
+        return false; // Permite continuar con los intentos
     }
+    
 
     /**
      * Increment the counter for a given key for a given decay time.
